@@ -6,8 +6,8 @@ import GMMEval
 
 if __name__=="__main__":
     #Loading the evaluation dataset
-    DTR,LTR=utilities.load_dataset("../Train.txt")
-    DTE,LTE=utilities.load_dataset("../Test.txt")
+    DTR,LTR=utilities.load_dataset("/content/Machine_Learning/Train.txt")
+    DTE,LTE=utilities.load_dataset("/content/Machine_Learning/Test.txt")
     
     
    #SVMpoly
