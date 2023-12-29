@@ -229,7 +229,7 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
                             for i, pi in enumerate(pi_values):
                                 minDCFS[i] = numpy.round(ev.evalF(pi, Cfp, Cfn, scores, labels), 3)
         
-                            PrimS = (minDCFS[0] + minDCFS[1]) / 2
+                            PrimS = numpy.round((minDCFS[0] + minDCFS[1]) / 2, 3)
                             print(f"PrimS={PrimS} pi(0.1)={minDCFS[0]} pi(0.5)={minDCFS[1]}");
                         
                             results.add_row([str(2**dft)+'-'+tgmm, str(2**dfnt)+'-'+ntgmm, p, minDCFS[0], minDCFS[1], PrimS])
@@ -237,14 +237,14 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
         
        
     
-    print("finito");
-    output = str(results)
-    # # save output txt file containing results for each model
-    with open('C:\\Users\\masci\\Desktop\\resultsEvalGMM.txt', 'w') as file:
-        file.write(f"Results with Gaussian Mixture Models" + '\n'+ str(output)+'\n')
-        
-        
-   
+                            print("finito");
+                            output = str(results)
+                            # # save output txt file containing results for each model
+                            with open('/content/drive/MyDrive/MachineLearningResults/results.txt', 'a') as file:
+                                file.write(f"dft={dft} tgmm={tgmm} dfnt={dfnt} ntgmm={ntgmm} PCA={p} pi(0.1)={minDCFS[0]} pi(0.5)={minDCFS[1]} PrimS={PrimS}" + '\n')
+                                
+                                
+                           
                     
                     
 def GMM_scores(DTR, LTR, DTE, dfnt, ntgmm, dft, tgmm ):
