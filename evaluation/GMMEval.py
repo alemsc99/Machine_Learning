@@ -204,16 +204,17 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
             
         DTR0=DTR[:, LTR==0] #Training samples of class 0
         DTR1=DTR[:, LTR==1] #Training samples of class 1
-            
+
+        if p==5:
+            target_gmm=["Diagonal", "Tied"]
+        else:
+            target_gmm=["Full", "Diagonal", "Tied"]
         
         for dft in doub_fact_target:            
             for tgmm in target_gmm:
                 for dfnt in doub_fact_nontarget:
                     for ntgmm in non_target_gmm:
-                        if p==5:
-                            target_gmm=["Diagonal", "Tied"]
-                        else:
-                            target_gmm=["Full", "Diagonal", "Tied"]
+                        
                             
                         print(f"Computing dft={2**dft} tgmm={tgmm} dfnt={2**dfnt} ntgmm={ntgmm} PCA={p}")
                         gmm_class0=GMM_LBG(DTR0, dfnt, ntgmm)
