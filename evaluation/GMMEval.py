@@ -206,10 +206,8 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
         DTR1=DTR[:, LTR==1] #Training samples of class 1
 
         if p==5:
-            target_gmm=["Tied"]
-        else:
-            target_gmm=["Full", "Diagonal", "Tied"]
-        
+            doub_fact_target=[1]
+            
         for dft in doub_fact_target:
             
                 
