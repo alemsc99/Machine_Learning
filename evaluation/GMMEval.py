@@ -207,6 +207,7 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
 
         if p==5:
             doub_fact_target=[1]
+            target_gmm=["Tied"]
             
         for dft in doub_fact_target:
             
