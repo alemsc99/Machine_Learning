@@ -182,7 +182,7 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
     results.align = "c"
     results.field_names = ["Target", " Non-Target", "PCA", "minDCF (\pi = 0.1)","minDCF (\pi = 0.5)", "Primary Metric"]
 
-    PCA_values = [5, 0]
+    PCA_values = [0]
     #PCA_values=[5,4,3,2,None]
     
     
@@ -205,9 +205,7 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
         DTR0=DTR[:, LTR==0] #Training samples of class 0
         DTR1=DTR[:, LTR==1] #Training samples of class 1
 
-        if p==5:
-            doub_fact_target=[1]
-            target_gmm=["Tied"]
+       
             
         for dft in doub_fact_target:
             
