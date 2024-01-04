@@ -186,7 +186,8 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
     #PCA_values=[5,4,3,2,None]
     
     
-    target_gmm=non_target_gmm=["Full","Diagonal", "Tied"]
+    non_target_gmm=["Full","Diagonal", "Tied"]
+    target_gmm=["Diagonal", "Tied"]
     
     doub_fact_target=[0,1]
     doub_fact_nontarget=[3, 4, 5, 6]
@@ -207,14 +208,15 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
 
        
             
-        for dft in doub_fact_target:
-            
-                
+        for dft in doub_fact_target:              
             for tgmm in target_gmm:
+                if tgmm=="Diagonal":
+                    doub_fact_nontarget=[4,5,6]
                 for dfnt in doub_fact_nontarget:
-                    
                     for ntgmm in non_target_gmm:
-                        
+
+                       
+                            
                             
                         print(f"Computing dft={2**dft} tgmm={tgmm} dfnt={2**dfnt} ntgmm={ntgmm} PCA={p}")
                         gmm_class0=GMM_LBG(DTR0, dfnt, ntgmm)
