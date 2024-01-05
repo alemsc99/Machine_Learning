@@ -187,7 +187,7 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
     
     
     non_target_gmm=["Full","Diagonal", "Tied"]
-    target_gmm=["Full", "Diagonal"]
+    target_gmm=["Diagonal"]
     
     doub_fact_target=[1]
     doub_fact_nontarget=[3, 4, 5, 6]
