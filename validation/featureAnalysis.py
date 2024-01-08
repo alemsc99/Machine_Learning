@@ -1,8 +1,34 @@
 import numpy
 import utilities
 import scipy.linalg
+import matplotlib.pyplot as plt
+def cumulative_explained_variance(D):
+    N = D.shape[1]  # number of samples
 
-
+    # Calcola i valori propri della matrice di covarianza
+    mu = D.mean(1)
+    mu = utilities.colFromRow(mu)
+    DC = D-mu
+    
+    C = numpy.dot(DC, DC.T)/N #Covariance matrix
+    eigenvalues, _ = numpy.linalg.eigh(C)
+    
+    # Ordina i valori propri in ordine decrescente
+    eigenvalues = eigenvalues[::-1]
+    
+    # Calcola la varianza spiegata per ogni componente principale
+    explained_variance = eigenvalues / numpy.sum(eigenvalues)
+    y_min, y_max = plt.ylim()
+    y_values = numpy.linspace(y_min, y_max, 20)
+    plt.yticks(y_values)
+    plt.xlim(right=5)
+    # Creare un grafico della varianza spiegata
+    plt.plot(numpy.cumsum(explained_variance))
+    plt.xlabel('Number of components')
+    plt.ylabel('Cumulative explained variance')
+    plt.grid()
+    plt.show()
+    
 def PCA(D, m):
     N = D.shape[1]  # number of samples
 

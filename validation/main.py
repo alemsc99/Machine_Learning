@@ -1,18 +1,19 @@
 import utilities
-import plots
-import featureAnalysis
-import gaussianModels
-import logisticRegression
-import quadLogisticRegression
-import svm
-import svmPoly
+# import plots
+# import featureAnalysis
+# import gaussianModels
+# import logisticRegression
+# import quadLogisticRegression
+# import svm
+# import svmPoly
 import svmRadial
 import GMM
 
 
 if __name__=="__main__":
     #Loading the training dataset
-    DTR,LTR=utilities.load_dataset("Train.txt")
+    DTR,LTR=utilities.load_dataset("../Train.txt")
+    
     
    
     #Starting plots
@@ -23,7 +24,8 @@ if __name__=="__main__":
     #plots.plot_scatter_PCA(DTR_PCA, LTR)
     #LDA
     #DTR_LDA=featureAnalysis.LDA(DTR, LTR, 2)
-    #plots.plot_hist_LDA(DTR_LDA, LTR)    
+    #plots.plot_hist_LDA(DTR_LDA, LTR) 
+    #featureAnalysis.cumulative_explained_variance(DTR)
     
     #GAUSSIAN CLASSIFIERS
     
@@ -40,11 +42,11 @@ if __name__=="__main__":
     #svmPoly.kFoldSvmP(DTR, LTR)
     
     #SVMRadial    
-    #svmRadial.kFoldSvmR(DTR, LTR)
+    svmRadial.kFoldSvmR(DTR, LTR)
     
     #GMM
     #GMM.kFoldGMM(DTR, LTR)
     
     #Score calibration
      #utilities.bayes_plot(DTR, LTR)
-    svmRadial.score_calib(DTR, LTR)
+    #svmRadial.score_calib(DTR, LTR)

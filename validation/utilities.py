@@ -1,7 +1,6 @@
 import numpy
 from prettytable import PrettyTable 
 import featureAnalysis 
-import models_llr
 import utilities
 import logisticRegression
 import matplotlib.pyplot as plt
