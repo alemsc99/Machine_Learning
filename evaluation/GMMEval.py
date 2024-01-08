@@ -185,12 +185,14 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
     PCA_values = [0]
     #PCA_values=[5,4,3,2,None]
     
-    
-    non_target_gmm=["Full","Diagonal", "Tied"]
-    target_gmm=["Diagonal"]
+    target_gmm=["Tied"]
+    non_target_gmm=["Tied"]
     
     doub_fact_target=[1]
-    doub_fact_nontarget=[3, 4, 5, 6]
+    doub_fact_nontarget=[6]
+    
+    
+    
     
     
     for p in PCA_values:
@@ -205,52 +207,47 @@ def kFoldGMM(DTR, LTR, DTE, LTE):
             
         DTR0=DTR[:, LTR==0] #Training samples of class 0
         DTR1=DTR[:, LTR==1] #Training samples of class 1
-
-       
             
-        for dft in doub_fact_target:              
+        
+        for dft in doub_fact_target:            
             for tgmm in target_gmm:
                 for dfnt in doub_fact_nontarget:
-                    for ntgmm in non_target_gmm:
-
-                       
-                            
-                            
-                        print(f"Computing dft={2**dft} tgmm={tgmm} dfnt={2**dfnt} ntgmm={ntgmm} PCA={p}")
-                        gmm_class0=GMM_LBG(DTR0, dfnt, ntgmm)
-                        _, SM0=logpdfGMM(DTE, gmm_class0)
-                           
-                           
-                        gmm_class1=GMM_LBG(DTR1, dft, tgmm)
-                        _, SM1=logpdfGMM(DTE, gmm_class1)
-                            
-                        srs=SM1-SM0     
-                          
-                        labels = numpy.hstack((labels, LTE))
-                            
-                        scores = numpy.hstack((scores, srs))
+                    for ntgmm in non_target_gmm:                         
+                            print(f"Computing dft={2**dft} tgmm={tgmm} dfnt={2**dfnt} ntgmm={ntgmm} PCA={p}")
+                            gmm_class0=GMM_LBG(DTR0, dfnt, ntgmm)
+                            _, SM0=logpdfGMM(DTE, gmm_class0)
                             
                            
-                        minDCFS = numpy.zeros(2)
-                        for i, pi in enumerate(pi_values):
-                            minDCFS[i] = numpy.round(ev.evalF(pi, Cfp, Cfn, scores, labels), 3)
+                            gmm_class1=GMM_LBG(DTR1, dft, tgmm)
+                            _, SM1=logpdfGMM(DTE, gmm_class1)
+                            
+                            srs=SM1-SM0     
+                            
+                            labels = numpy.hstack((labels, LTE))
+                            
+                            scores = numpy.hstack((scores, srs))
+                            
+                           
+                            minDCFS = numpy.zeros(2)
+                            for i, pi in enumerate(pi_values):
+                                minDCFS[i] = numpy.round(ev.evalF(pi, Cfp, Cfn, scores, labels), 3)
         
-                        PrimS = numpy.round((minDCFS[0] + minDCFS[1]) / 2, 3)
-                        print(f"PrimS={PrimS} pi(0.1)={minDCFS[0]} pi(0.5)={minDCFS[1]}");
+                            PrimS = (minDCFS[0] + minDCFS[1]) / 2
+                            print(f"PrimS={PrimS} pi(0.1)={minDCFS[0]} pi(0.5)={minDCFS[1]}");
                         
-                        results.add_row([str(2**dft)+'-'+tgmm, str(2**dfnt)+'-'+ntgmm, p, minDCFS[0], minDCFS[1], PrimS])
+                            results.add_row([str(2**dft)+'-'+tgmm, str(2**dfnt)+'-'+ntgmm, p, minDCFS[0], minDCFS[1], PrimS])
         
         
        
     
-                        print("finito");
-                        output = str(results)
-                        # # save output txt file containing results for each model
-                        with open('/content/drive/MyDrive/MachineLearningResults/results.txt', 'a') as file:
-                            file.write(f"dft={dft} tgmm={tgmm} dfnt={dfnt} ntgmm={ntgmm} PCA={p} pi(0.1)={minDCFS[0]} pi(0.5)={minDCFS[1]} PrimS={PrimS}" + '\n')
-                                
-                                
-                           
+    print("finito");
+    output = str(results)
+    # # save output txt file containing results for each model
+    with open('C:\\Users\\masci\\Desktop\\resultsEvalGMM.txt', 'w') as file:
+        file.write(f"Results with Gaussian Mixture Models" + '\n'+ str(output)+'\n')
+        
+        
+   
                     
                     
 def GMM_scores(DTR, LTR, DTE, dfnt, ntgmm, dft, tgmm ):
