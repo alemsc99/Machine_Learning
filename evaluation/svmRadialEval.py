@@ -5,21 +5,80 @@ import featureAnalysis
 from prettytable import PrettyTable
 import matplotlib.pyplot as plt
 import datetime
-import models_llr
+import scipy
 
+def compute_scores(DTR,DTE,LTR, gamma, k, c):
+    Z = numpy.zeros(LTR.shape)
+    # Z[LTR == 0] = 1
+    # Z[LTR == 1] = -1 0.8365
+    Z[LTR == 0] = -1
+    Z[LTR == 1] = 1
+    #Z = utilities.colFromRow(Z)
+    
+    
+    H = numpy.zeros((DTR.shape[1], DTR.shape[1]))
+    
+    
+    for i in range(DTR.shape[1]):
+        for j in range(DTR.shape[1]):
+            H[i, j] = numpy.exp(-gamma * (numpy.linalg.norm(DTR[:, i] - DTR[:, j]) ** 2)) + k * k
+    
+    #kernel=numpy.exp(-gamma* Ghat)+ k*k                       
+
+    H = utilities.colFromRow(Z)*utilities.rowFromCol(Z)*H
+   
+    #print(f"{H.shape}")
+    def JDual(alpha):
+        Ha = numpy.dot(H,utilities.colFromRow(alpha))
+        aHa = numpy.dot(utilities.rowFromCol(alpha),Ha)
+        a1 = alpha.sum()
+        return -0.5 * aHa.ravel() + a1, -Ha.ravel() + numpy.ones(alpha.size)
+
+    def LDual(alpha):
+        loss, grad = JDual(alpha)
+        return -loss, -grad
+
+
+  
+   
+    
+    alphaStar, _x, _y = scipy.optimize.fmin_l_bfgs_b(
+        LDual,   
+        numpy.zeros(DTR.shape[1]),
+    bounds = [(0,c)] * DTR.shape[1],
+    factr = 1.0,
+    maxiter = 100000,
+    maxfun = 100000)
+    
+    
+    kernel = numpy.zeros((DTR.shape[1], DTE.shape[1]))
+    for i in range(DTR.shape[1]):
+        for j in range(DTE.shape[1]):
+            kernel[i, j] = numpy.exp(-gamma * (numpy.linalg.norm(DTR[:, i] - DTE[:, j]) ** 2)) + k * k
+            
+    
+    
+
+    scores= numpy.sum(numpy.dot(alphaStar * utilities.rowFromCol(Z), kernel), axis=0)
+    return scores.ravel()
+    
 
 DTR, LTR = utilities.load_dataset("../Train.txt")
 DTE, LTE = utilities.load_dataset("../Test.txt")
 
 
-PCA = [5,None] #number of dimension to keep in PCA
+PCA = [5] #number of dimension to keep in PCA
 
 
 
 
-C_list = numpy.logspace(-4,1,6).tolist() 
-K_list = numpy.logspace(-2,0,3).tolist() 
-gamma_list = numpy.logspace(-2,0,3).tolist() 
+# C_list = numpy.logspace(-4,1,6).tolist() 
+# K_list = numpy.logspace(-2,0,3).tolist() 
+# gamma_list = numpy.logspace(-2,0,3).tolist() 
+
+C_list = [0.1]
+K_list = [1.0]
+gamma_list = [0.01]
 # working points
 Cfn = 1
 Cfp = 1
@@ -40,11 +99,13 @@ LTE = LTE[indexTE]
 for K_num, K in enumerate(K_list):
     
     for PCA_m in PCA:
-        if PCA_m!= 0:
+        if PCA_m != 0:
+            
             DTR,P = featureAnalysis.PCA(DTR,PCA_m) # fit PCA to training set
-            DTE = numpy.dot(P.T,DTE) # transform test samples according to P from PCA on dataset                
+            DTE = numpy.dot(P.T,DTE) # transform test samples according to P from PCA on dataset   
+                        
         
-    
+        
         st = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         print(f"### {st}: Starting SVM RBF with K = {K}, PCA = {PCA_m}") #feedback print
         
@@ -68,7 +129,7 @@ for K_num, K in enumerate(K_list):
                     #DTR, DTE = utilities.apply_Z_Norm(DTR,DTE)
                     #pool test scores and test labels in order to compute the minDCF on complete pool set
                 labels_pool = numpy.hstack((labels_pool,LTE))
-                scores_pool = numpy.hstack((scores_pool,models_llr.SVM_RBF(DTR, LTR, DTE, C, K, gamma)))
+                scores_pool = numpy.hstack((scores_pool,compute_scores(DTR, DTE, LTR, gamma, K, C)))
                  
                 #compute minDCF for the current SVM with/without PCA for the 2 working points  
                 minDCF = numpy.zeros(2)
